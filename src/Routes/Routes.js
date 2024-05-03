@@ -13,6 +13,28 @@ router.get('/boards', async (req, res) => {
   }
 });
 
+router.put('/boards/:boardId/cards', async (req, res) => {
+  try {
+    const { boardId } = req.params;
+    const updatedBoardData = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(boardId)) {
+      return res.status(400).json({ error: 'Invalid Board ID' });
+    }
+
+    const updatedBoard = await Board.findByIdAndUpdate(boardId, updatedBoardData, { new: true });
+
+    if (!updatedBoard) {
+      return res.status(404).json({ error: 'Board not found' });
+    }
+
+    res.json(updatedBoard);
+  } catch (error) {
+    console.error('Error updating board:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Rota para deletar um board pelo seu ID
 router.delete('/boards/:boardId', async (req, res) => {
   try {
@@ -133,9 +155,9 @@ router.post('/boards/:boardId/cards', async (req, res) => {
     }
 
     board.cards.push(newCardData);
-    await board.save(); // Salva a atualização no banco de dados
+    const cardNew = await board.save(); // Salva a atualização no banco de dados
 
-    res.status(201).json({ message: 'Card criado com sucesso', card: newCardData });
+    res.status(201).json(cardNew);
   } catch (error) {
     console.error('Erro ao criar card:', error);
     res.status(400).json({ error: error.message });
