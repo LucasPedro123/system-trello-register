@@ -13,7 +13,7 @@ router.get('/boards', async (req, res) => {
   }
 });
 
-router.put('/boards/:boardId/cards', async (req, res) => {
+router.put('/boards/:boardId', async (req, res) => {
   try {
     const { boardId } = req.params;
     const updatedBoardData = req.body;
